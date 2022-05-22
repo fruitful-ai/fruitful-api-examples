@@ -5,7 +5,7 @@ from typing import Dict
 logger = logging.getLogger(__name__)
 sio = socketio.Client(logger=True)
 
-ROOT_URL = 'https://api-dev.fruitful.ag'
+ROOT_URL = 'https://api.fruitful.ag'
 SYSTEM_ID = '<SYSTEM_ID>'
 DEVICE_ID = '<DEVICE_ID>' 
 X_API_KEY = '<X_API_KEY>'
