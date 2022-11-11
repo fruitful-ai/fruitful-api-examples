@@ -9,7 +9,7 @@ const String X_API_KEY = "<X_API_KEY>";                                         
 const String SYSTEM_ID = "<SYSTEM_ID>";                                                  // System ID (unique identifier of your growth environment)
 const String DEVICE_ID = "<DEVICE_ID>";                                                  // Device ID (unique ID of the device streaming data)
 
-String SERVER_NAME = "api.fruitful.ag";                                                  // Server name of Fruitful
+String SERVER_NAME = "https://api.fruitful.ag";                                                  // Server name of Fruitful
 String SERVER_PATH = "/v1/systems/" + SYSTEM_ID + "/devices/" + DEVICE_ID + "/data";     // Endpoint for sensor readings
 
 const int MIN_INTERVAL_IN_MINUTES = 5;                                                   // Minutes between each HTTP POST request
