@@ -1,12 +1,13 @@
-# Post an Image
+Image Uploader Script
 
-### Goal
+Upload all images in a specific folder to the FruitfulAI platform
 
-1. Take an image with a Raspberry PI
-2. Send the image to be analysed by Fruitful AI
+## Getting started
 
------------------------
+- Install the dependencies in `requirements.txt`
 
-### Swagger Demo
+## Run
 
-Please chek [Swagger docs](https://api.fruitful.ag/v1/docs/) for further information & a live demo of how to use Fruitful AI to analyse images.
+```py
+python main.py --system-id YOUR_SYSTEM_ID --device-id YOUR_DEVICE_ID --api-key YOUR_API_KEY --images-folder /path/to/images --max-workers 5
+```

@@ -1,54 +1,68 @@
 import logging
-import os
-from datetime import datetime
-from time import sleep
-
 import requests
-from picamera import PiCamera
+from pathlib import Path
+from tqdm import tqdm
+from concurrent.futures import ThreadPoolExecutor
+import argparse
 
+# Set up logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+# Create console handler and set level to debug
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
 
-SYSTEM_ID = '<SYSTEM_ID>'
-DEVICE_ID = '<DEVICE_ID>'
-url = f'https://api.fruitful.ag/v1/systems/{SYSTEM_ID}/devices/{DEVICE_ID}/image'
-X_API_KEY = '<X-API-KEY>'
+# Create formatter and add it to the handler
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
 
+# Add handler to the logger
+logger.addHandler(ch)
 
-def take_picture(local_img_path):
-    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-    camera = PiCamera()
-    camera.resolution = (1440, 1080)
-    camera.iso = 100
-    sleep(3)
+def post_image(image_path, url, header):
     try:
-        camera.start_preview()
-        camera.annotate_text = str(current_time)
-        sleep(2)
-        camera.capture(local_img_path)
-        camera.stop_preview()
-        logger.info(f'Picture taken and saved under {local_img_path}')
-    except Exception as e:
-        logger.error(f'Error in taking a picture: {e}')
-        raise e
-
-
-def main():
-    local_img_path = os.path.join(DIR_PATH, 'plant.jpg')
-    take_picture(local_img_path)
-
-    try:
-        header = {'X-API-KEY': X_API_KEY}
-        with open(local_img_path, 'rb') as img:
+        with open(image_path, 'rb') as img:
             files = {'image': img}
             r = requests.post(url, files=files, headers=header)
-        logger.info(f'Request status: {r.status_code}, {r.text}')
-    except Exception as e:
-        logger.exception(e)
 
+            if r.status_code > 201:
+                logger.error(f"Failed to upload {image_path.name}: {r.status_code} - {r.text}")
+    except Exception as e:
+        logger.exception(f"Failed to upload {image_path.name}: {e}")
+
+def main():
+    parser = argparse.ArgumentParser(description='Upload images to the server.')
+    parser.add_argument('--system-id', required=True, help='System ID')
+    parser.add_argument('--device-id', required=True, help='Device ID')
+    parser.add_argument('--api-key', required=True, help='API Key')
+    parser.add_argument('--images-folder', required=True, help='Folder containing images to upload')
+    parser.add_argument('--max-workers', type=int, default=10, help='Maximum number of worker threads')
+
+    args = parser.parse_args()
+
+    images_folder = Path(args.images_folder)
+    header = {'X-API-KEY': args.api_key}
+
+    # Construct the URL
+    url = f'https://api.fruitful.ag/v1/systems/{args.system_id}/devices/{args.device_id}/image'
+
+    # List all PNG images in the folder
+    images = list(images_folder.rglob("*.png"))
+
+    if not images:
+        logger.info("No images found to upload.")
+        return
+
+    max_workers = min(args.max_workers, len(images))
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        list(tqdm(
+            executor.map(lambda img: post_image(img, url, header), images),
+            total=len(images),
+            desc="Uploading images",
+            unit="image"
+        ))
 
 if __name__ == '__main__':
     main()
