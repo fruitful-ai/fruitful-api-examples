@@ -18,6 +18,3 @@ Get `CLIENT_ID` (called *System ID* in the Swagger docs) and `API_KEY` from the
 [Fruitful App](https://app.fruitful.ag) settings. `DEVICE_ID` is any unique string you
 choose per device.
 
-Exit code is `1` if any upload failed.
-
-See the [Swagger docs](https://api.fruitful.ag/v1/docs/) for the full API.

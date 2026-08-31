@@ -1,6 +1,6 @@
 # Fruitful API Examples
 
-![Fruitful logo](fixtures/logo.png)
+![Fruitful logo](fixtures/logo_ffai.png)
 
 Small, self-contained examples for the [Fruitful API](https://api.fruitful.ag/v1/docs/).
 
