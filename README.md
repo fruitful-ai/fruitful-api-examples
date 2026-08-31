@@ -6,7 +6,7 @@ Small, self-contained examples for the [Fruitful API](https://api.fruitful.ag/v1
 
 | Example | What it does |
 |---|---|
-| [`post-image-python`](post-image-python/) | Upload a folder of images in parallel |
+| [`post-image-python`](post-image-python/) | Upload a folder of images |
 
 ## Setup
 
